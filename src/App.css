@@ -1,7 +1,10 @@
 .App {
   text-align: center;
   color: black;
-  font-size: max(5vh, 50px);
+  font-size: max(4vh, 30px);
+
+  margin-top: 5vh;
+
 }
 
 .Main-Button {
@@ -13,4 +16,21 @@
   color: #61dafb;
 }
 
+.Input-Div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
 
+  margin-top: 5vh;
+  margin-bottom: 6vh;
+}
+
+.Labeled-Input {
+  display: flex;
+  flex-direction: column;
+  max-width: 6em;
+}
+
+.Main-Input {
+  font-size:100%
+}

@@ -1,16 +1,9 @@
-const getLibraries = async (latitude, longitude) => {
-  const maxDistanceInMeters = 700;
+import { getEarthDistanceInMeters } from "./math";
 
-  // clean up "latitude" and "longitude"
-  // This only allows ".", digits, and "-", so it should not do anything crazy in overpass even if it is not a number
-  latitude = latitude.replace(",", ".");
-  latitude = latitude.replace("[^\\d-.]", "");
-  longitude = longitude.replace(",", ".");
-  longitude = longitude.replace("[^\\d-.]", "");
-
+const getLibraries = async (lat, lon, maxDistanceInMeters) => {
   const overpassQuery = `
     [out:json];
-    node(around:${maxDistanceInMeters}, ${latitude}, ${longitude})["amenity"="library"];
+    node(around:${maxDistanceInMeters}, ${lat}, ${lon})["amenity"="library"];
     out;
   `;
 
@@ -28,7 +21,16 @@ const getLibraries = async (latitude, longitude) => {
 
   console.log(responseJson);
 
-  const amenities = responseJson.elements.map((amenity) => ({...amenity.tags, lat: amenity.lat, lon: amenity.lon}));
+  const amenities = responseJson.elements
+    .map((amenity) => ({
+      ...amenity.tags,
+      lat: amenity.lat,
+      lon: amenity.lon,
+      distance: Math.round(
+        getEarthDistanceInMeters(lat, lon, amenity.lat, amenity.lon)
+      ),
+    }))
+    .filter((amenity) => amenity.name);
 
   return amenities;
 };

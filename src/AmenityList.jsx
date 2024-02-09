@@ -1,8 +1,11 @@
 // list of all amenities, probably libraries
 import { getEarthDistanceInMeters } from "./math";
 
-const getAmenityString = (amenity, lat, lon) => {
-  const distanceInMeters = Math.round(getEarthDistanceInMeters(lat, lon, amenity.lat, amenity.lon));
+const getAmenityString = (amenity) => {
+  const distanceString =
+    amenity.distance < 1000
+      ? `${amenity.distance}m`
+      : `${Math.round(amenity.distance / 1000)}km`;
 
   if (
     amenity["addr:housenumber"] &&
@@ -19,17 +22,20 @@ const getAmenityString = (amenity, lat, lon) => {
       " " +
       amenity["addr:state"];
 
-    return `${amenity.name} @ ${address}, ${distanceInMeters}m away`;
+    return `${amenity.name} @ ${address}, ${distanceString} away`;
   } else {
-    return `${amenity.name}, ${distanceInMeters}m away`;
+    return `${amenity.name}, ${distanceString} away`;
   }
 };
 
-const AmenityList = ({ amenityList, lat, lon }) => {
+const AmenityList = ({ amenityList }) => {
+  // sort by distance
+  amenityList = amenityList.sort((a, b) => a.distance - b.distance);
+
   return amenityList.length > 0 ? (
     <ul>
       {amenityList.map((amenity) => (
-        <ul key={amenity.name}>{getAmenityString(amenity, lat, lon)}</ul>
+        <ul key={amenity.name}>{getAmenityString(amenity)}</ul>
       ))}
     </ul>
   ) : (
